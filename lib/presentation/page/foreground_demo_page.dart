@@ -14,7 +14,7 @@ class ForegroundDemoPage extends StatefulWidget {
 }
 
 class _ForegroundDemoPageState extends State<ForegroundDemoPage> {
-  // ==================== 狀態變數 ====================
+  // ==================== 狀態變數 ==================== 
 
   /// 背景服務是否正在運行 (長駐狀態)
   bool _isServiceRunning = false;
