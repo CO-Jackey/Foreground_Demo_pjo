@@ -28,6 +28,19 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>	
+        <string>com.pravera.flutter_foreground_task.refresh</string>
+    </array>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>fetch</string>
+    </array>
+
+    <!-- 3. 通知權限說明 -->
+    <!-- iOS 不需要專門的 Info.plist 欄位來顯示通知授權訊息，可移除或保留自訂鍵 -->
+    <!-- 如果保留，請注意 Apple 沒有標準鍵名 "NSUserNotificationsUsageDescription" -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
