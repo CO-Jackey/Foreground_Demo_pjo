@@ -46,5 +46,6 @@ flutter {
 
 // ✅ 加入這個區塊:添加 desugaring 依賴
 dependencies {
+   implementation(files("libs/itriHRBR_new.jar"))
    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }

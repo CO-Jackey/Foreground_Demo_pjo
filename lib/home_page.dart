@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:foreground_demo_pjo/presentation/page/ble_demo_page.dart';
+import 'package:foreground_demo_pjo/presentation/page/ble_foreground_demo_page.dart';
 import 'package:foreground_demo_pjo/presentation/page/foreground_demo_page.dart';
+import 'package:foreground_demo_pjo/presentation/page/mqtt_demo_page.dart'; // ✅ 新增
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,11 +18,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // APP 啟動時清理可能殘留的服務
     _cleanupOnStartup();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // 請求必要權限
       _requestPermissions();
     });
   }
@@ -41,9 +42,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _requestPermissions() async {
-    // Android 13+, you need to allow notification permission to display foreground service notification.
-    //
-    // iOS: If you need notification, ask for permission.
     final NotificationPermission notificationPermission =
         await FlutterForegroundTask.checkNotificationPermission();
     if (notificationPermission != NotificationPermission.granted) {
@@ -51,22 +49,11 @@ class _HomePageState extends State<HomePage> {
     }
 
     if (Platform.isAndroid) {
-      // Android 12+, there are restrictions on starting a foreground service.
-      //
-      // To restart the service on device reboot or unexpected problem, you need to allow below permission.
       if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
-        // This function requires `android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` permission.
         await FlutterForegroundTask.requestIgnoreBatteryOptimization();
       }
 
-      // Use this utility only if you provide services that require long-term survival,
-      // such as exact alarm service, healthcare service, or Bluetooth communication.
-      //
-      // This utility requires the "android.permission.SCHEDULE_EXACT_ALARM" permission.
-      // Using this permission may make app distribution difficult due to Google policy.
       if (!await FlutterForegroundTask.canScheduleExactAlarms) {
-        // When you call this function, will be gone to the settings page.
-        // So you need to explain to the user why set it.
         await FlutterForegroundTask.openAlarmsAndRemindersSettings();
       }
     }
@@ -76,25 +63,156 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Foreground Demo Home Page'),
+        title: const Text('Foreground Demo Home'),
+        backgroundColor: Colors.blue,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => WithForegroundTask(
-                      child: ForegroundDemoPage(),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                '前景服務測試',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              // 計數測試
+              _buildMenuButton(
+                context,
+                icon: Icons.calculate,
+                title: '計數測試',
+                subtitle: '背景計數 + 推播通知',
+                color: Colors.blue,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => WithForegroundTask(
+                        child: const ForegroundDemoPage(),
+                      ),
                     ),
-                  ),
-                );
-              },
-              child: const Text('前景測試頁面'),
-            ),
-          ],
+                  );
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              // MQTT 測試 (如果已經創建了)
+              _buildMenuButton(
+                context,
+                icon: Icons.router,
+                title: 'MQTT 測試',
+                subtitle: '拉取數據 + 解析驗證',
+                color: Colors.purple,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const MqttTestPage(),
+                    ),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              // ✅ 藍牙測試
+              _buildMenuButton(
+                context,
+                icon: Icons.bluetooth,
+                title: '藍牙測試',
+                subtitle: '連線 + SDK 解析',
+                color: Colors.teal,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const BleTestPage(),
+                    ),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              // 藍芽前景測試
+              _buildMenuButton(
+                context,
+                icon: Icons.bluetooth,
+                title: '藍牙前景測試',
+                subtitle: '連線 + SDK 解析',
+                color: Colors.orange,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const BleForegroundPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuButton(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, size: 32, color: color),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios, color: Colors.grey[400]),
+            ],
+          ),
         ),
       ),
     );

@@ -1,0 +1,13 @@
+name: health_plugin
+description: A new flutter plugin project.
+version: 0.0.1
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.3.0"
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.example.health_plugin
+        pluginClass: HealthCalculatePlugin

@@ -1,8 +1,10 @@
 import 'dart:isolate'; // 👈 新增這行
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:foreground_demo_pjo/helper/devLog.dart';
 
 /// 前景服務示範頁面
 /// 展示如何使用長駐服務模式實現穩定的背景計數功能
@@ -14,7 +16,7 @@ class ForegroundDemoPage extends StatefulWidget {
 }
 
 class _ForegroundDemoPageState extends State<ForegroundDemoPage> {
-  // ==================== 狀態變數 ==================== 
+  // ==================== 狀態變數 ====================
 
   /// 背景服務是否正在運行 (長駐狀態)
   bool _isServiceRunning = false;
@@ -32,6 +34,10 @@ class _ForegroundDemoPageState extends State<ForegroundDemoPage> {
   bool _isProcessing = false;
 
   static int _serviceIdCounter = 11111;
+
+  bool isHealthMode = false;
+
+  Map<String, dynamic>? lastHealthData;
 
   // ==================== 生命週期方法 ====================
 
@@ -129,33 +135,42 @@ class _ForegroundDemoPageState extends State<ForegroundDemoPage> {
   void _onReceiveTaskData(dynamic data) {
     print('📻 [TaskDataCallback] 收到資料: $data'); // 👈 加上日誌
 
-    if (data is Map) {
-      final type = data['type'] as String?;
+    if (isHealthMode) {
+      devLog('HealthMode', '收到資料: $data');
+      if (data is Map<String, dynamic>) {
+        setState(() {
+          lastHealthData = data;
+        });
+      }
+    } else {
+      if (data is Map) {
+        final type = data['type'] as String?;
 
-      switch (type) {
-        // 背景服務已準備完成
-        case 'serviceReady':
-          print('✅ 收到服務準備完成訊號');
-          setState(() {
-            _isServiceRunning = true;
-          });
-          break;
+        switch (type) {
+          // 背景服務已準備完成
+          case 'serviceReady':
+            print('✅ 收到服務準備完成訊號');
+            setState(() {
+              _isServiceRunning = true;
+            });
+            break;
 
-        // 計數值更新
-        case 'countUpdate':
-          setState(() {
-            _currentCount = data['count'] as int;
-          });
-          print('📥 UI 收到計數更新: $_currentCount');
-          break;
+          // 計數值更新
+          case 'countUpdate':
+            setState(() {
+              _currentCount = data['count'] as int;
+            });
+            print('📥 UI 收到計數更新: $_currentCount');
+            break;
 
-        // 計數已完成 (達到目標)
-        case 'countingFinished':
-          setState(() {
-            _isCounting = false;
-          });
-          print('🎯 計數已完成並自動停止');
-          break;
+          // 計數已完成 (達到目標)
+          case 'countingFinished':
+            setState(() {
+              _isCounting = false;
+            });
+            print('🎯 計數已完成並自動停止');
+            break;
+        }
       }
     }
   }
@@ -406,7 +421,9 @@ class _ForegroundDemoPageState extends State<ForegroundDemoPage> {
         top: false,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('背景計數 + 推播 (長駐模式)'),
+            title: isHealthMode
+                ? const Text('健康模式')
+                : const Text('背景計數 + 推播 (長駐模式)'),
             backgroundColor: Colors.blue,
           ),
           body: Center(
@@ -459,37 +476,66 @@ class _ForegroundDemoPageState extends State<ForegroundDemoPage> {
                   const SizedBox(height: 20),
 
                   // ========== 計數狀態顯示 ==========
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: _isCounting ? Colors.blue[50] : Colors.grey[100],
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _isCounting
-                            ? Colors.blue[300]!
-                            : Colors.grey[300]!,
-                        width: 2,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          _isCounting ? Icons.play_circle : Icons.pause_circle,
-                          color: _isCounting ? Colors.blue : Colors.grey,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          _isCounting ? '正在計數' : '已暫停',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: _isCounting ? Colors.blue : Colors.grey,
+                  isHealthMode
+                      ? Container(
+                          child: Column(
+                            children: [
+                              Text(
+                                '健康模式中',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green[700],
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                '最新健康資料: ${lastHealthData ?? "無資料"}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: _isCounting
+                                ? Colors.blue[50]
+                                : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _isCounting
+                                  ? Colors.blue[300]!
+                                  : Colors.grey[300]!,
+                              width: 2,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                _isCounting
+                                    ? Icons.play_circle
+                                    : Icons.pause_circle,
+                                color: _isCounting ? Colors.blue : Colors.grey,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _isCounting ? '正在計數' : '已暫停',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: _isCounting
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
 
                   const SizedBox(height: 40),
 
@@ -1005,3 +1051,355 @@ class MyTaskHandler extends TaskHandler {
     }
   }
 }
+
+// ==================== 背景任務處理器 (支援多設備) ====================
+// class MyTaskHandler extends TaskHandler {
+//   // ✅ 核心:每個設備獨立的 SDK 實例和狀態
+//   final Map<String, DeviceContext> _deviceContexts = {};
+
+//   // ✅ 當前正在處理的設備 ID
+//   String? _activeDeviceId;
+
+//   // ✅ 數據處理隊列 (防止並發錯亂)
+//   final List<DeviceDataTask> _taskQueue = [];
+//   bool _isProcessing = false;
+
+//   @override
+//   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
+//     print('🚀 多設備背景服務啟動');
+
+//     FlutterForegroundTask.sendDataToMain({
+//       'type': 'serviceReady',
+//     });
+//   }
+
+//   @override
+//   void onReceiveData(Object data) async {
+//     if (data is Map) {
+//       final action = data['action'] as String?;
+
+//       switch (action) {
+//         // ========== 初始化新設備 ==========
+//         case 'initDevice':
+//           await _initializeDevice(
+//             deviceId: data['deviceId'] as String,
+//             type: data['type'] as int,
+//           );
+//           break;
+
+//         // ========== 處理設備數據 ==========
+//         case 'processData':
+//           _queueDeviceData(
+//             deviceId: data['deviceId'] as String,
+//             bleData: data['bleData'] as Uint8List,
+//           );
+//           break;
+
+//         // ========== 切換活動設備 ==========
+//         case 'switchDevice':
+//           _switchActiveDevice(data['deviceId'] as String);
+//           break;
+
+//         // ========== 斷開設備 ==========
+//         case 'disposeDevice':
+//           await _disposeDevice(data['deviceId'] as String);
+//           break;
+//       }
+//     }
+//   }
+
+//   @override
+//   void onRepeatEvent(DateTime timestamp) {
+//     // ✅ 定時處理隊列中的任務 (避免阻塞)
+//     if (!_isProcessing && _taskQueue.isNotEmpty) {
+//       _processNextTask();
+//     }
+
+//     // ✅ 定時檢查活動設備的狀態
+//     if (_activeDeviceId != null) {
+//       _checkDeviceHealth(_activeDeviceId!);
+//     }
+//   }
+
+//   @override
+//   Future<void> onDestroy(DateTime timestamp, bool isTimeOut) async {
+//     print('🛑 清理所有設備資源...');
+
+//     // 清理所有設備
+//     for (final deviceId in _deviceContexts.keys) {
+//       await _disposeDevice(deviceId);
+//     }
+
+//     _deviceContexts.clear();
+//     _taskQueue.clear();
+//   }
+
+//   // ═══════════════════════════════════════════════════════════════════════════
+//   // 設備管理方法
+//   // ═══════════════════════════════════════════════════════════════════════════
+
+//   /// 初始化新設備
+//   Future<void> _initializeDevice({
+//     required String deviceId,
+//     required int type,
+//   }) async {
+//     print('🔧 初始化設備: $deviceId (type: $type)');
+
+//     try {
+//       // ✅ 如果設備已存在,先清理
+//       if (_deviceContexts.containsKey(deviceId)) {
+//         await _disposeDevice(deviceId);
+//       }
+
+//       // ✅ 創建設備上下文
+//       final context = DeviceContext(
+//         deviceId: deviceId,
+//         type: type,
+//       );
+
+//       // ✅ 初始化 MethodChannel (與 Kotlin SDK 通信)
+//       const channel = MethodChannel(
+//         'com.example.flutter_itri_hrbr/health_calculate',
+//       );
+
+//       final result = await channel.invokeMethod('initialize', {
+//         'deviceId': deviceId,
+//         'type': type,
+//       });
+
+//       if (result == true) {
+//         context.isInitialized = true;
+//         _deviceContexts[deviceId] = context;
+
+//         print('✅ 設備 $deviceId 初始化成功');
+
+//         // 回報給 UI
+//         FlutterForegroundTask.sendDataToMain({
+//           'type': 'deviceInitialized',
+//           'deviceId': deviceId,
+//           'success': true,
+//         });
+//       }
+//     } catch (e) {
+//       print('❌ 設備 $deviceId 初始化失敗: $e');
+
+//       FlutterForegroundTask.sendDataToMain({
+//         'type': 'deviceInitialized',
+//         'deviceId': deviceId,
+//         'success': false,
+//         'error': e.toString(),
+//       });
+//     }
+//   }
+
+//   /// 切換活動設備
+//   void _switchActiveDevice(String deviceId) {
+//     if (!_deviceContexts.containsKey(deviceId)) {
+//       print('⚠️ 設備 $deviceId 未初始化');
+//       return;
+//     }
+
+//     final oldDevice = _activeDeviceId;
+//     _activeDeviceId = deviceId;
+
+//     print('🔄 切換活動設備: $oldDevice → $deviceId');
+
+//     // ⚠️ 清空隊列中屬於舊設備的任務 (可選)
+//     // _taskQueue.removeWhere((task) => task.deviceId == oldDevice);
+
+//     FlutterForegroundTask.updateService(
+//       notificationTitle: '📱 連接中',
+//       notificationText: '設備: ${deviceId.substring(0, 8)}...',
+//     );
+//   }
+
+//   /// 將數據加入處理隊列 (避免競爭條件)
+//   void _queueDeviceData({
+//     required String deviceId,
+//     required Uint8List bleData,
+//   }) {
+//     // ✅ 檢查設備是否已初始化
+//     if (!_deviceContexts.containsKey(deviceId)) {
+//       print('⚠️ 設備 $deviceId 未初始化,忽略數據');
+//       return;
+//     }
+
+//     // ✅ 加入隊列
+//     _taskQueue.add(
+//       DeviceDataTask(
+//         deviceId: deviceId,
+//         data: bleData,
+//         timestamp: DateTime.now(),
+//       ),
+//     );
+
+//     print('📥 數據已加入隊列 [設備: $deviceId, 隊列長度: ${_taskQueue.length}]');
+
+//     // ✅ 如果隊列過長,警告
+//     if (_taskQueue.length > 50) {
+//       print('⚠️ 隊列過長! 可能處理不及');
+//     }
+//   }
+
+//   /// 處理隊列中的下一個任務 (序列化處理,避免衝突)
+//   Future<void> _processNextTask() async {
+//     if (_taskQueue.isEmpty || _isProcessing) return;
+
+//     _isProcessing = true;
+//     final task = _taskQueue.removeAt(0);
+
+//     try {
+//       print('⚙️ 處理數據 [設備: ${task.deviceId}]');
+
+//       // ✅ 取得對應的設備上下文
+//       final context = _deviceContexts[task.deviceId];
+//       if (context == null || !context.isInitialized) {
+//         print('⚠️ 設備 ${task.deviceId} 未就緒,跳過');
+//         return;
+//       }
+
+//       // ✅ 調用 Kotlin SDK 處理數據
+//       const channel = MethodChannel(
+//         'com.example.flutter_itri_hrbr/health_calculate',
+//       );
+
+//       final result = await channel.invokeMethod('splitPackage', {
+//         'deviceId': task.deviceId, // 👈 關鍵:明確指定設備 ID
+//         'data': task.data,
+//       });
+
+//       if (result != null) {
+//         // ✅ 更新設備上下文的最新數據
+//         context.lastResult = Map<String, dynamic>.from(result);
+//         context.lastUpdateTime = DateTime.now();
+//         context.dataCount++;
+
+//         // ✅ 提取關鍵數據
+//         final hrValue = result['HRValue'] ?? 0;
+//         final brValue = result['BRValue'] ?? 0;
+//         final timestamp = result['TimeStamp'] ?? 0;
+
+//         print('✅ 數據處理完成 [HR: $hrValue, BR: $brValue]');
+
+//         // ✅ 發送結果給 UI
+//         FlutterForegroundTask.sendDataToMain({
+//           'type': 'deviceDataProcessed',
+//           'deviceId': task.deviceId,
+//           'hrValue': hrValue,
+//           'brValue': brValue,
+//           'timestamp': timestamp,
+//           'rawResult': result,
+//         });
+
+//         // ✅ 更新通知 (如果是活動設備)
+//         if (task.deviceId == _activeDeviceId) {
+//           FlutterForegroundTask.updateService(
+//             notificationTitle: '💓 監測中',
+//             notificationText: 'HR: $hrValue | BR: $brValue',
+//           );
+//         }
+//       }
+//     } catch (e) {
+//       print('❌ 處理數據失敗: $e');
+
+//       FlutterForegroundTask.sendDataToMain({
+//         'type': 'deviceDataError',
+//         'deviceId': task.deviceId,
+//         'error': e.toString(),
+//       });
+//     } finally {
+//       _isProcessing = false;
+
+//       // ✅ 遞歸處理下一個任務
+//       if (_taskQueue.isNotEmpty) {
+//         _processNextTask();
+//       }
+//     }
+//   }
+
+//   /// 清理設備資源
+//   Future<void> _disposeDevice(String deviceId) async {
+//     print('🧹 清理設備: $deviceId');
+
+//     try {
+//       // ✅ 調用 Kotlin 清理 SDK 實例
+//       const channel = MethodChannel(
+//         'com.example.flutter_itri_hrbr/health_calculate',
+//       );
+
+//       await channel.invokeMethod('dispose', {
+//         'deviceId': deviceId,
+//       });
+
+//       // ✅ 移除上下文
+//       _deviceContexts.remove(deviceId);
+
+//       // ✅ 清空該設備的隊列任務
+//       _taskQueue.removeWhere((task) => task.deviceId == deviceId);
+
+//       // ✅ 如果是活動設備,清除引用
+//       if (_activeDeviceId == deviceId) {
+//         _activeDeviceId = null;
+//       }
+
+//       print('✅ 設備 $deviceId 已清理');
+//     } catch (e) {
+//       print('❌ 清理設備失敗: $e');
+//     }
+//   }
+
+//   /// 檢查設備健康狀態
+//   void _checkDeviceHealth(String deviceId) {
+//     final context = _deviceContexts[deviceId];
+//     if (context == null) return;
+
+//     // ✅ 檢查是否長時間無數據
+//     if (context.lastUpdateTime != null) {
+//       final duration = DateTime.now().difference(context.lastUpdateTime!);
+//       if (duration.inSeconds > 10) {
+//         print('⚠️ 設備 $deviceId 超過 10 秒無數據');
+
+//         FlutterForegroundTask.sendDataToMain({
+//           'type': 'deviceTimeout',
+//           'deviceId': deviceId,
+//           'duration': duration.inSeconds,
+//         });
+//       }
+//     }
+//   }
+
+//   // ... (原有的 _initializeNotifications, _sendNotification 方法)
+// }
+
+// // ═══════════════════════════════════════════════════════════════════════════
+// // 輔助類
+// // ═══════════════════════════════════════════════════════════════════════════
+
+// /// 設備上下文 (儲存每個設備的狀態)
+// class DeviceContext {
+//   final String deviceId;
+//   final int type;
+
+//   bool isInitialized = false;
+//   Map<String, dynamic>? lastResult;
+//   DateTime? lastUpdateTime;
+//   int dataCount = 0;
+
+//   DeviceContext({
+//     required this.deviceId,
+//     required this.type,
+//   });
+// }
+
+// /// 數據處理任務
+// class DeviceDataTask {
+//   final String deviceId;
+//   final Uint8List data;
+//   final DateTime timestamp;
+
+//   DeviceDataTask({
+//     required this.deviceId,
+//     required this.data,
+//     required this.timestamp,
+//   });
+// }
