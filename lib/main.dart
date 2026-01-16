@@ -13,7 +13,7 @@ void main() {
       priority: NotificationPriority.LOW,
     ),
     iosNotificationOptions: const IOSNotificationOptions(
-      showNotification: false,
+      showNotification: true,
     ),
     foregroundTaskOptions: ForegroundTaskOptions(
       eventAction: ForegroundTaskEventAction.repeat(1000),
@@ -28,7 +28,7 @@ void main() {
   FlutterForegroundTask.addTaskDataCallback((data) {
     print('🌍 [全局回調] 收到背景資料: $data');
   });
-  
+
   // ⭐ 新增:初始化通訊端口
   FlutterForegroundTask.initCommunicationPort();
   // ⭐ 2. 啟動 APP
