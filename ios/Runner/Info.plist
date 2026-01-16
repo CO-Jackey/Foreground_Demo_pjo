@@ -29,18 +29,33 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 
+	<!-- ⭐ 背景任務設定 -->
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>	
-        <string>com.pravera.flutter_foreground_task.refresh</string>
-    </array>
-    <key>UIBackgroundModes</key>
-    <array>
-        <string>fetch</string>
-    </array>
-
-    <!-- 3. 通知權限說明 -->
-    <!-- iOS 不需要專門的 Info.plist 欄位來顯示通知授權訊息，可移除或保留自訂鍵 -->
-    <!-- 如果保留，請注意 Apple 沒有標準鍵名 "NSUserNotificationsUsageDescription" -->
+		<string>com.pravera.flutter_foreground_task.refresh</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
+	
+	<!-- 藍牙權限 -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>此應用程式需要使用藍牙以連接並與外部裝置（例如心率感測器或配件）通訊,提供應用的核心功能。</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>此應用程式需要使用藍牙周邊功能以與其他裝置互動並傳送/接收資料。</string>
+	
+	<!-- 定位權限 -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>此應用程式需要在使用期間存取您的位置,以便掃描並連接附近的藍牙裝置,並提供與裝置位置相關的功能。</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>此應用程式需要在前景與背景持續存取位置,以支援背景藍牙連線與穩定的裝置同步（例如持續監測和維持與外部配件的連線）。</string>
+	
+	<!-- ✅ 修正:加上值 -->
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	
+	<!-- 支援的方向 -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -54,9 +69,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	
+	<!-- ✅ 修正:加上值 -->
 	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
 </plist>

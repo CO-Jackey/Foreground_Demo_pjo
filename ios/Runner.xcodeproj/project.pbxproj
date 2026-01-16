@@ -11,6 +11,9 @@
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		66A56AEDAC9192E51D99D2EE /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C5E0C53FD19857F584DA325 /* Pods_Runner.framework */; };
+		7464C25B2F19F06900C7EAE6 /* HealthCalculatePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7464C25A2F19F06900C7EAE6 /* HealthCalculatePlugin.swift */; };
+		7464C2832F1A334A00C7EAE6 /* ITRIHRBR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7464C2782F1A331E00C7EAE6 /* ITRIHRBR.framework */; };
+		7464C2842F1A334A00C7EAE6 /* ITRIHRBR.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7464C2782F1A331E00C7EAE6 /* ITRIHRBR.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		9476F90B1B8A9706317F6F06 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6E2CFF992D6A39487609006 /* Pods_RunnerTests.framework */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -29,12 +32,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
+		7464C2852F1A334A00C7EAE6 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				7464C2842F1A334A00C7EAE6 /* ITRIHRBR.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -52,6 +56,20 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		40CBA0F9E5F602583D24DAEF /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7464C2502F172E1400C7EAE6 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
+		7464C25A2F19F06900C7EAE6 /* HealthCalculatePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCalculatePlugin.swift; sourceTree = "<group>"; };
+		7464C2632F1A32E600C7EAE6 /* health_plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = health_plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7464C2672F1A331E00C7EAE6 /* package_config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package_config.json; sourceTree = "<group>"; };
+		7464C2682F1A331E00C7EAE6 /* package_graph.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package_graph.json; sourceTree = "<group>"; };
+		7464C26A2F1A331E00C7EAE6 /* itriHRBR_new.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = itriHRBR_new.jar; sourceTree = "<group>"; };
+		7464C26C2F1A331E00C7EAE6 /* HealthCalculatePlugin.kt */ = {isa = PBXFileReference; lastKnownFileType = text; path = HealthCalculatePlugin.kt; sourceTree = "<group>"; };
+		7464C26D2F1A331E00C7EAE6 /* SdkManager.kt */ = {isa = PBXFileReference; lastKnownFileType = text; path = SdkManager.kt; sourceTree = "<group>"; };
+		7464C2742F1A331E00C7EAE6 /* build.gradle.kts */ = {isa = PBXFileReference; lastKnownFileType = text; path = build.gradle.kts; sourceTree = "<group>"; };
+		7464C2762F1A331E00C7EAE6 /* HealthCalculatePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCalculatePlugin.swift; sourceTree = "<group>"; };
+		7464C2782F1A331E00C7EAE6 /* ITRIHRBR.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ITRIHRBR.framework; sourceTree = "<group>"; };
+		7464C27A2F1A331E00C7EAE6 /* health_plugin.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = health_plugin.podspec; sourceTree = "<group>"; };
+		7464C27C2F1A331E00C7EAE6 /* pubspec.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = pubspec.lock; sourceTree = "<group>"; };
+		7464C27D2F1A331E00C7EAE6 /* pubspec.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = pubspec.yaml; sourceTree = "<group>"; };
+		7464C27F2F1A332700C7EAE6 /* health_plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = health_plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -81,6 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7464C2832F1A334A00C7EAE6 /* ITRIHRBR.framework in Frameworks */,
 				66A56AEDAC9192E51D99D2EE /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -107,6 +126,121 @@
 				331C807B294A618700263BE5 /* RunnerTests.swift */,
 			);
 			path = RunnerTests;
+			sourceTree = "<group>";
+		};
+		7464C2692F1A331E00C7EAE6 /* .dart_tool */ = {
+			isa = PBXGroup;
+			children = (
+				7464C2672F1A331E00C7EAE6 /* package_config.json */,
+				7464C2682F1A331E00C7EAE6 /* package_graph.json */,
+			);
+			path = .dart_tool;
+			sourceTree = "<group>";
+		};
+		7464C26B2F1A331E00C7EAE6 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				7464C26A2F1A331E00C7EAE6 /* itriHRBR_new.jar */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		7464C26E2F1A331E00C7EAE6 /* health_plugin */ = {
+			isa = PBXGroup;
+			children = (
+				7464C26C2F1A331E00C7EAE6 /* HealthCalculatePlugin.kt */,
+				7464C26D2F1A331E00C7EAE6 /* SdkManager.kt */,
+			);
+			path = health_plugin;
+			sourceTree = "<group>";
+		};
+		7464C26F2F1A331E00C7EAE6 /* example */ = {
+			isa = PBXGroup;
+			children = (
+				7464C26E2F1A331E00C7EAE6 /* health_plugin */,
+			);
+			path = example;
+			sourceTree = "<group>";
+		};
+		7464C2702F1A331E00C7EAE6 /* com */ = {
+			isa = PBXGroup;
+			children = (
+				7464C26F2F1A331E00C7EAE6 /* example */,
+			);
+			path = com;
+			sourceTree = "<group>";
+		};
+		7464C2712F1A331E00C7EAE6 /* kotlin */ = {
+			isa = PBXGroup;
+			children = (
+				7464C2702F1A331E00C7EAE6 /* com */,
+			);
+			path = kotlin;
+			sourceTree = "<group>";
+		};
+		7464C2722F1A331E00C7EAE6 /* main */ = {
+			isa = PBXGroup;
+			children = (
+				7464C2712F1A331E00C7EAE6 /* kotlin */,
+			);
+			path = main;
+			sourceTree = "<group>";
+		};
+		7464C2732F1A331E00C7EAE6 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7464C2722F1A331E00C7EAE6 /* main */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		7464C2752F1A331E00C7EAE6 /* android */ = {
+			isa = PBXGroup;
+			children = (
+				7464C26B2F1A331E00C7EAE6 /* libs */,
+				7464C2732F1A331E00C7EAE6 /* src */,
+				7464C2742F1A331E00C7EAE6 /* build.gradle.kts */,
+			);
+			path = android;
+			sourceTree = "<group>";
+		};
+		7464C2772F1A331E00C7EAE6 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				7464C2762F1A331E00C7EAE6 /* HealthCalculatePlugin.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		7464C2792F1A331E00C7EAE6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7464C2782F1A331E00C7EAE6 /* ITRIHRBR.framework */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
+		7464C27B2F1A331E00C7EAE6 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				7464C2772F1A331E00C7EAE6 /* Classes */,
+				7464C2792F1A331E00C7EAE6 /* Frameworks */,
+				7464C27A2F1A331E00C7EAE6 /* health_plugin.podspec */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
+		7464C27E2F1A331E00C7EAE6 /* health_plugin */ = {
+			isa = PBXGroup;
+			children = (
+				7464C2692F1A331E00C7EAE6 /* .dart_tool */,
+				7464C2752F1A331E00C7EAE6 /* android */,
+				7464C27B2F1A331E00C7EAE6 /* ios */,
+				7464C27C2F1A331E00C7EAE6 /* pubspec.lock */,
+				7464C27D2F1A331E00C7EAE6 /* pubspec.yaml */,
+			);
+			name = health_plugin;
+			path = ../plugins/health_plugin;
 			sourceTree = "<group>";
 		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
@@ -144,6 +278,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				7464C25A2F19F06900C7EAE6 /* HealthCalculatePlugin.swift */,
 				7464C2502F172E1400C7EAE6 /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
@@ -160,6 +295,9 @@
 		F94D6CB3C94F2D439EEFF647 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7464C27F2F1A332700C7EAE6 /* health_plugin.framework */,
+				7464C27E2F1A331E00C7EAE6 /* health_plugin */,
+				7464C2632F1A32E600C7EAE6 /* health_plugin.framework */,
 				1C5E0C53FD19857F584DA325 /* Pods_Runner.framework */,
 				E6E2CFF992D6A39487609006 /* Pods_RunnerTests.framework */,
 			);
@@ -197,7 +335,7 @@
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
-				9705A1C41CF9048500538489 /* Embed Frameworks */,
+				7464C2852F1A334A00C7EAE6 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				E2576A4334954397EB53EE36 /* [CP] Embed Pods Frameworks */,
 				FD9D5D496FEFB34294137F82 /* [CP] Copy Pods Resources */,
@@ -397,6 +535,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
+				7464C25B2F19F06900C7EAE6 /* HealthCalculatePlugin.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -493,6 +632,10 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = YYWHG62B2P;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs",
+				);
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -677,6 +820,10 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = YYWHG62B2P;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs",
+				);
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -701,6 +848,10 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = YYWHG62B2P;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs",
+				);
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

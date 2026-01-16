@@ -1,28 +1,30 @@
-import Flutter
 import UIKit
-// ⭐ 加入這個 import
-import flutter_foreground_task
+import Flutter
+import flutter_foreground_task // 保持這個，因為背景服務套件需要它
 
-// ⭐ 加入這個函數
+// 這個函數是用來給背景任務註冊用的，保留它
 func registerPlugins(registry: FlutterPluginRegistry) {
   GeneratedPluginRegistrant.register(with: registry)
 }
+
 @main
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
 
-    // ⭐ 加入這行:註冊背景任務 plugin
+    // 🔴 刪除這行！現在 GeneratedPluginRegistrant 會幫你做這件事
+    // HealthCalculatePlugin.register(with: self.registrar(forPlugin: "HealthCalculatePlugin")!)
+
+    // ✅ 保留這行：確保背景 isolate 啟動時會註冊所有 Plugin (包含你的 health_plugin)
     FlutterForegroundTaskPlugin.setPluginRegistrantCallback(registerPlugins)
 
-    // ⭐ 如果需要通知權限,加入這段
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
     }
 
+    GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

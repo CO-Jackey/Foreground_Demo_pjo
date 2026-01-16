@@ -531,17 +531,57 @@ class _BleQuickScanDialog extends StatefulWidget {
 class _BleQuickScanDialogState extends State<_BleQuickScanDialog> {
   List<ScanResult> _scanResults = [];
   StreamSubscription<List<ScanResult>>? _scanSubscription;
+  StreamSubscription<BluetoothAdapterState>? _adapterStateSubscription;
   bool _isScanning = false;
+  String _statusMessage = '正在檢查藍牙狀態...';
 
   @override
   void initState() {
     super.initState();
-    _startScan();
+    _checkBluetoothAndScan();
+  }
+
+  Future<void> _checkBluetoothAndScan() async {
+    try {
+      // 檢查藍牙狀態
+      final adapterState = await FlutterBluePlus.adapterState.first;
+
+      if (adapterState != BluetoothAdapterState.on) {
+        setState(() {
+          _statusMessage = '請先開啟藍牙';
+        });
+
+        // 監聽藍牙狀態變化
+        _adapterStateSubscription = FlutterBluePlus.adapterState.listen((state) {
+          if (state == BluetoothAdapterState.on) {
+            _startScan();
+          } else {
+            setState(() {
+              _statusMessage = '請先開啟藍牙';
+              _isScanning = false;
+            });
+          }
+        });
+        return;
+      }
+
+      // 藍牙已開啟,開始掃描
+      _startScan();
+    } catch (e) {
+      setState(() {
+        _statusMessage = '檢查藍牙狀態失敗: $e';
+      });
+      print('❌ 檢查藍牙狀態失敗: $e');
+    }
   }
 
   void _startScan() {
     if (_isScanning) return;
-    setState(() => _isScanning = true);
+
+    setState(() {
+      _isScanning = true;
+      _statusMessage = '正在掃描...';
+    });
 
     _scanSubscription = FlutterBluePlus.scanResults.listen((results) {
       if (mounted) {
@@ -553,14 +593,31 @@ class _BleQuickScanDialogState extends State<_BleQuickScanDialog> {
       }
     });
 
-    FlutterBluePlus.startScan(timeout: const Duration(seconds: 10)).then((_) {
-      if (mounted) setState(() => _isScanning = false);
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 10))
+        .then((_) {
+      if (mounted) {
+        setState(() {
+          _isScanning = false;
+          if (_scanResults.isEmpty) {
+            _statusMessage = '未發現設備';
+          }
+        });
+      }
+    }).catchError((e) {
+      if (mounted) {
+        setState(() {
+          _isScanning = false;
+          _statusMessage = '掃描失敗: $e';
+        });
+      }
+      print('❌ 掃描失敗: $e');
     });
   }
 
   @override
   void dispose() {
     _scanSubscription?.cancel();
+    _adapterStateSubscription?.cancel();
     FlutterBluePlus.stopScan();
     super.dispose();
   }
@@ -588,12 +645,28 @@ class _BleQuickScanDialogState extends State<_BleQuickScanDialog> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const CircularProgressIndicator(),
+                    if (_isScanning)
+                      const CircularProgressIndicator()
+                    else
+                      Icon(
+                        Icons.bluetooth_disabled,
+                        size: 48,
+                        color: Colors.grey[400],
+                      ),
                     const SizedBox(height: 16),
                     Text(
-                      _isScanning ? '正在掃描...' : '未發現設備',
+                      _statusMessage,
                       style: TextStyle(color: Colors.grey[600]),
+                      textAlign: TextAlign.center,
                     ),
+                    if (!_isScanning && _statusMessage.contains('藍牙')) ...[
+                      const SizedBox(height: 12),
+                      ElevatedButton.icon(
+                        onPressed: _checkBluetoothAndScan,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('重新檢查'),
+                      ),
+                    ],
                   ],
                 ),
               )

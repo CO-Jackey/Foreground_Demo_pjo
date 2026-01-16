@@ -11,3 +11,5 @@ flutter:
       android:
         package: com.example.health_plugin
         pluginClass: HealthCalculatePlugin
+      ios:
+        pluginClass: HealthCalculatePlugin
